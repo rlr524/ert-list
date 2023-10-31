@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model ERTMember {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastName    String   @db.VarChar(255)
+  firstName   String   @db.VarChar(255)
+  homePhone   String   @db.VarChar(255)
+  mobilePhone String   @db.VarChar(255)
+  title       String   @db.VarChar(255)
+  location    Location @relation(fields: [locationId], references: [id])
+  locationId  Int
+}
+
+model Location {
+  id             Int         @id @default(autoincrement())
+  locationNumber String      @db.VarChar(10)
+  locationName   String      @db.VarChar(255)
+  type           Type        @relation(fields: [locationTypeId], references: [id])
+  locationTypeId Int         @unique
+  members        ERTMember[]
+}
+
+model Type {
+  id       Int       @id @default(autoincrement())
+  name     String    @db.VarChar(255)
+  Location Location?
+}
